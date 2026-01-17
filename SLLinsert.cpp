@@ -27,18 +27,34 @@ class LL
     public:
         // Constructor to initialize an empty linked list
         LL() : head(NULL), tail(NULL) {};
-
+        
         // Appends a node at the end of the linked list
         void append(int n);
-
+        
         // Inserts a node at the beginning of the linked list
         void insertfirst(int n);
-
+        
         // Inserts a node at a given position (1-based index)
         void insert(int i, int n);
-
+        
         // Inserts a node in a sorted linked list at the correct position
         void appendsort(int n);
+        
+        // deleting an element at pos = n (1 - indexed)
+        int del(int n);
+        
+        // Checks if the list is sorted or not 
+        bool CheckSort();
+        
+        // removes duplicate from sorted list
+        void RemoveDuplicates();
+        
+        // Reversing the list using 3 pointers (Pointers sliding method)
+        void RevList();
+        
+        // Recursivly Reversing the List
+        void RecRevList();
+        void RecRevList(Node *q, Node *p);
 
         // Displays all elements of the linked list
         void display();
@@ -162,31 +178,178 @@ void LL::appendsort(int n)
     return;
 }
 
+int LL::del(int n)
+{
+    if(!head)
+        return INT_MIN;
+    Node *p = head;
+    Node *q = head->next;
+
+    if(n==1)
+    {
+        int x = head->val;
+        head = q;
+        delete q;
+        return x;
+    }
+
+    else
+    {
+        n--;
+        while(--n)
+        {
+            p = p->next;
+            q = q->next;
+        }
+    
+        p->next = q->next;
+        int x = q->val;
+        delete q;
+        return x;
+    }
+}
+
+bool LL::CheckSort()
+{
+    if(!head)
+    {
+        return false;
+    }
+
+    Node *p = head;
+    Node *q = head->next;
+
+    while(q)
+    {
+        if(p->val > q->val)
+        {
+            return false;
+        }
+        p = p->next;
+        q = q->next;
+    }
+
+    return true;
+}
+
+void LL::RemoveDuplicates()
+{
+    if(!head)
+        return;
+    
+    Node *p = head;
+    Node *q = head->next;
+
+    while(q)
+    {
+        if(p->val != q->val)
+        {
+            p = q; // same as p = p->next as q is one ahead of p
+            q = q->next;
+        }
+
+        else
+        {
+            p->next = q->next;
+            delete q;
+            q = p->next;
+        }
+    }
+
+    return;
+}
+
+void LL::RevList()
+{
+    if(!head)
+        return;
+    Node *r, *q, *p;
+    // all above pointers are in series and moving in series
+
+    r = nullptr;
+    q = nullptr;
+    p = head;
+
+    while(p)
+    {
+        r = q;
+        q = p;
+        p = p->next;
+        q->next = r;
+    }
+
+    head = q;
+    return;
+
+}
+
+void LL::RecRevList(Node *q, Node *p)
+{
+    if(p)
+    {
+        RecRevList(p, p->next);
+        p->next = q;
+    }
+
+    else
+    {
+        head = q;
+    }
+}
+
+void LL::RecRevList()
+{
+    if(!head)
+    {
+        return;
+    }
+
+    RecRevList(nullptr, head);
+}
 // Main function to demonstrate linked list operations
 int main()
 {
     LL l;
     l.append(10);
+    l.append(10);
+    l.append(10);
+    l.append(20);
+    l.append(20);
     l.append(20);
     l.append(30);
+    l.append(30);
+    l.append(30);
+    l.append(40);
+    l.append(40);
     l.append(40);
     cout << "Original LL: ";
     l.display();
 
-    l.appendsort(45);
-    cout << "\nLL after inserting 45: ";
+    /* 
+    cout << "\nLL after deleting " << l.del(4) << "\n";
     l.display();
+    */
 
-    l.appendsort(50);
-    cout << "\nLL after inserting 50: ";
-    l.display();
+    /*
+    cout << "\nIs list sorted ? : " << boolalpha << l.CheckSort();
+    cout << "\nIs list sorted ? : " << (l.CheckSort() ? "true" : "false");
+    */
 
-    l.appendsort(22);
-    cout << "\nLL after inserting 22: ";
+    /*
+    l.RemoveDuplicates();
+    cout << "\nAfter Removing Duplicates: ";
     l.display();
+    */
 
-    l.appendsort(44);
-    cout << "\nLL after inserting 44: ";
+    /*
+    cout << "\nReversed LL: ";
+    l.RevList();
     l.display();
+    */
+
+    cout << "\nReversed LL: ";
+    l.RecRevList();
+    l.display();
+    
     return 0;
 }
